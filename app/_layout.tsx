@@ -4,9 +4,6 @@ export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: {
-          backgroundColor: "#f4511e",
-        },
         headerTintColor: "#fff",
         headerTitleStyle: {
           fontWeight: "bold",
@@ -16,18 +13,18 @@ export default function RootLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "할 일 리스트",
           headerStyle: {
-            backgroundColor: "pink",
+            backgroundColor: "#2A9764",
           },
         }}
       />
       <Stack.Screen
         name="detail/[id]"
         options={{
-          title: "Detail",
+          title: "상세 리스트",
           headerStyle: {
-            backgroundColor: "green",
+            backgroundColor: "#2A9764",
           },
         }}
       />

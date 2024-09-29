@@ -13,7 +13,8 @@ import {
 type TodoItemProps = {
   id: string;
   inputText: string;
-  setInputText: (text: string) => void;
+  subInputText: string;
+  setSubInputText: (text: string) => void;
   isEditTodo: string | undefined;
   todo: ITodo;
   editHandler: (id: string) => void;
@@ -25,7 +26,8 @@ type TodoItemProps = {
 export default function TodoItem({
   id,
   inputText,
-  setInputText,
+  subInputText,
+  setSubInputText,
   isEditTodo,
   todo,
   editHandler,
@@ -38,12 +40,13 @@ export default function TodoItem({
 
   /** Render */
   return (
-    <View className="flex-row items-center justify-between w-full my-2">
-      <View className="flex-row items-center space-x-2">
+    <View className="flex-row items-center justify-between w-full py-1 px-4">
+      <View className="flex-row items-center">
         <Checkbox
           value={todo?.completed}
           onValueChange={() => selectToggleHandler(todo?.id)}
           color={todo?.completed ? "#4630EB" : undefined}
+          className="mr-2"
         />
         <View>
           <Modal
@@ -67,10 +70,10 @@ export default function TodoItem({
 
           {id === isEditTodo ? (
             <TextInput
-              value={inputText}
-              onChangeText={setInputText}
+              value={subInputText}
+              onChangeText={setSubInputText}
               placeholder={inputText}
-              className="border border-gray-500 rounded-md flex-1 pl-4 py-2 max-w-[230px] min-w-[230px]"
+              className="border border-gray-500 rounded-md flex-1 pl-2 max-w-[230px] min-w-[230px]"
             />
           ) : (
             <Pressable onPress={() => setModalVisible(!modalVisible)}>

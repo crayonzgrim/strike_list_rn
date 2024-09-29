@@ -1,38 +1,38 @@
+import { getAsyncStorageData, setAsyncStorageData } from "@/store/storage";
 import { ITodoList } from "@/types";
 import { create } from "zustand";
 
 type TodoListStore = {
   todoList: ITodoList[];
   setTodoList: (todoList: ITodoList[]) => void;
-  // loadTodoList: () => void;
+  loadTodoList: () => Promise<void>;
 };
 
 export const useTodoListStore = create<TodoListStore>((set) => ({
-  todoList: BOX_DATA ?? [],
+  todoList: [],
 
   setTodoList: (todoList: ITodoList[]) => {
     set((state) => {
       const updatedList = [...todoList];
-      // setMMKVStore("todoList", JSON.stringify(updatedList));
+      setAsyncStorageData("todoList", JSON.stringify(updatedList)); // AsyncStorage에 저장
       return { ...state, todoList: updatedList };
     });
   },
 
-  // loadTodoList: () => {
-  //   const storedList = getMMKVStore("todoList");
-  //
-  //   if (storedList) {
-  //     set({ todoList: JSON.parse(storedList) });
-  //   } else {
-  //     set({ todoList: BOX_DATA });
-  //   }
-  // },
+  loadTodoList: async () => {
+    const storedList = await getAsyncStorageData("todoList");
+    if (storedList) {
+      set({ todoList: storedList });
+    } else {
+      set({ todoList: BOX_DATA });
+    }
+  },
 }));
 
 const BOX_DATA = [
   {
     id: "1",
-    title: "First Item",
+    title: "First example",
     todos: [
       { id: "1", text: "Todo 1", completed: false },
       { id: "2", text: "Todo 2", completed: true },
@@ -52,7 +52,7 @@ const BOX_DATA = [
   },
   {
     id: "2",
-    title: "Second Item",
+    title: "Second example",
     todos: [
       {
         id: "21",

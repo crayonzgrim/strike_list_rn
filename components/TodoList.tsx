@@ -1,12 +1,13 @@
 import TodoItem from "@/components/TodoItem";
 import { useTodoListStore } from "@/store";
 import { ITodo } from "@/types";
-import { FlatList, View } from "react-native";
+import { FlatList, ListRenderItemInfo, SafeAreaView } from "react-native";
 
 interface TodoListProps {
   listId: string;
   inputText: string;
-  setInputText: React.Dispatch<React.SetStateAction<string>>;
+  subInputText: string;
+  setSubInputText: React.Dispatch<React.SetStateAction<string>>;
   isEditTodo: string | undefined;
   todoList: ITodo[];
   editHandler: (id: string) => void;
@@ -17,7 +18,8 @@ interface TodoListProps {
 export default function TodoList({
   listId,
   inputText,
-  setInputText,
+  subInputText,
+  setSubInputText,
   isEditTodo,
   todoList,
   editHandler,
@@ -48,26 +50,25 @@ export default function TodoList({
 
   /** Render */
   return (
-    <View className="flex-col justify-between items-center bg-white my-6">
+    <SafeAreaView className="flex-1 py-1">
       <FlatList
-        keyExtractor={(todo) => todo.id.toString()}
         data={todoList}
-        renderItem={({ item }) => {
-          return (
-            <TodoItem
-              id={item.id}
-              inputText={inputText}
-              setInputText={setInputText}
-              isEditTodo={isEditTodo}
-              todo={item}
-              editHandler={editHandler}
-              editTodoHandler={editTodoHandler}
-              deleteHandler={deleteHandler}
-              selectToggleHandler={selectToggleHandler}
-            />
-          );
-        }}
+        renderItem={({ item: todo }: ListRenderItemInfo<ITodo>) => (
+          <TodoItem
+            id={todo.id}
+            inputText={inputText}
+            subInputText={subInputText}
+            setSubInputText={setSubInputText}
+            isEditTodo={isEditTodo}
+            todo={todo}
+            editHandler={editHandler}
+            editTodoHandler={editTodoHandler}
+            deleteHandler={deleteHandler}
+            selectToggleHandler={selectToggleHandler}
+          />
+        )}
+        keyExtractor={(todo) => todo.id}
       />
-    </View>
+    </SafeAreaView>
   );
 }

@@ -1,8 +1,17 @@
 import TodoList from "@/components/TodoList";
 import { useTodoListStore } from "@/store";
+import { ITodoList } from "@/types";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Text, TextInput, TouchableHighlight, View } from "react-native";
+import {
+  FlatList,
+  ListRenderItemInfo,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableHighlight,
+  View,
+} from "react-native";
 
 export default function Detail() {
   /** Property */
@@ -12,6 +21,7 @@ export default function Detail() {
   const setTodoListStore = useTodoListStore((state) => state.setTodoList);
 
   const [inputText, setInputText] = useState<string>("");
+  const [subInputText, setSubInputText] = useState<string>("");
   const [isEditTodo, setIsEditTodo] = useState<string | undefined>(undefined);
 
   /** Function */
@@ -30,7 +40,6 @@ export default function Detail() {
     });
 
     setTodoListStore(updatedTodoListStore);
-
     setInputText("");
   };
 
@@ -38,7 +47,7 @@ export default function Detail() {
     const updatedTodoListStore = todoListStore.map((todoList) => {
       if (todoList.id === searchParamsId) {
         const filteredList = todoList.todos.map((todo) =>
-          todo.id === id ? { ...todo, text: inputText } : todo,
+          todo.id === id ? { ...todo, text: subInputText } : todo,
         );
         return { ...todoList, todos: filteredList };
       }
@@ -67,41 +76,42 @@ export default function Detail() {
   /** Render */
   return (
     <View className="bg-white flex-1">
-      <View className="w-96 mx-auto">
-        <View className="flex-row space-x-2 mt-6">
-          <TextInput
-            value={isEditTodo === undefined ? inputText : ""}
-            onChangeText={setInputText}
-            placeholder="할 일을 입력하세요"
-            className="border border-gray-500 rounded-md flex-1 pl-4 py-2"
-          />
+      <View className="flex-row space-x-2 mt-6 w-96 mx-auto">
+        <TextInput
+          value={isEditTodo === undefined ? inputText : ""}
+          onChangeText={setInputText}
+          placeholder="할 일을 입력하세요"
+          className="border border-gray-500 rounded-md flex-1 pl-3 py-2"
+        />
 
-          <TouchableHighlight
-            onPress={addTodoItemHandler}
-            className="bg-red-300 justify-center px-3 rounded-md"
-          >
-            <Text>추가</Text>
-          </TouchableHighlight>
-        </View>
-
-        {todoListStore?.map((todo) => {
-          if (todo.id === searchParamsId) {
-            return (
-              <TodoList
-                key={todo.id}
-                listId={todo.id}
-                inputText={inputText}
-                setInputText={setInputText}
-                isEditTodo={isEditTodo}
-                todoList={todo.todos}
-                editHandler={(id) => setIsEditTodo(id)}
-                editTodoHandler={editTodoHandler}
-                deleteHandler={deleteHandler}
-              />
-            );
-          }
-        })}
+        <TouchableHighlight
+          onPress={addTodoItemHandler}
+          className="bg-red-300 justify-center px-3 rounded-md"
+          disabled={subInputText.length > 0}
+        >
+          <Text>추가</Text>
+        </TouchableHighlight>
       </View>
+
+      <SafeAreaView className="flex-1">
+        <FlatList
+          data={todoListStore}
+          renderItem={({ item }: ListRenderItemInfo<ITodoList>) => (
+            <TodoList
+              listId={item.id}
+              inputText={inputText}
+              subInputText={subInputText}
+              setSubInputText={setSubInputText}
+              isEditTodo={isEditTodo}
+              todoList={item.todos}
+              editHandler={(id) => setIsEditTodo(id)}
+              editTodoHandler={editTodoHandler}
+              deleteHandler={deleteHandler}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+        />
+      </SafeAreaView>
     </View>
   );
 }
